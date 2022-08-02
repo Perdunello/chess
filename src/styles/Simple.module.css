@@ -1,0 +1,41 @@
+.mainWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inactive {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background: hotpink;
+}
+
+.figure {
+  content: "";
+}
+
+.activeFigure {
+  width: 60px;
+  height: 60px;
+  border: 5px green solid;
+  background: greenyellow;
+}
+
+.attackFigure {
+  width: 60px;
+  height: 60px;
+  border: 5px #c00000 solid;
+  background: #e85e5e;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+}
+
+.activityPlaceMove {
+  background: url("../../public/wing.png") no-repeat;
+}
+
+/*# sourceMappingURL=Simple.module.css.map */

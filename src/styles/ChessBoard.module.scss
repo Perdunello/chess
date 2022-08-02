@@ -1,0 +1,62 @@
+.mainWrapper {
+  background: white;
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%, -50%);
+
+  .tableWrapper {
+    display: flex;
+//transform: rotate(180deg);
+    ul:nth-child(odd) li:nth-child(even) {
+      background: #4d4b4b;
+    }
+
+    ul:nth-child(odd) li:nth-child(odd) {
+      background: white;
+    }
+
+    ul:nth-child(1) li:nth-child(n),
+    ul:nth-child(10) li:nth-child(n),
+    ul:nth-child(n) li:nth-child(1),
+    ul:nth-child(n) li:nth-child(10) {
+      //moz-user-select: none;
+      //-khtml-user-select: none;
+      user-select: none;
+      background: brown;
+    }
+
+    ul:nth-child(10) li:nth-child(n),
+    ul:nth-child(n) li:nth-child(1) {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+ul {
+  li {
+    display: flex;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    align-items: center;
+    border: black 1px solid;
+    width: 70px;
+    height: 70px;
+    list-style: none;
+
+    &:nth-child(odd) {
+      background: #4d4b4b;
+    }
+
+    &:nth-child(even) {
+      background: white;
+    }
+  }
+}
+
+img {
+
+  font-size: 14px;
+  //transform: rotate(180deg);
+}
