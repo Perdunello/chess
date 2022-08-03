@@ -49,7 +49,7 @@ const initialState = {
     //         {img: null, pos: '1'}, {img: null, pos: '0000'},],
     // ]
     boardData: [],
-    turn: 'white',
+    turn: 'black',
     activePiece: null,
 }
 const chessBoardReducer = (state = initialState, action) => {
@@ -64,124 +64,154 @@ const chessBoardReducer = (state = initialState, action) => {
         case SET_ACTIVITY_SPACES:
 
         case SET_ACTIVE_PIECE:
+            const deleteAnotherElements = (li) => {
+                if (li.className === 'activityPlaceMove') {
+                    return {...li, className: 'inactive'}
+                } else if (li.className === 'activeFigure') {
+                    return {...li, className: 'figure'}
+                } else if (li.className === 'attackFigure') {
+                    return {...li, className: 'figure'}
+                } else if (action.payload.className === 'activeFigure') {
+                    if (li.className === 'attackFigure') {
+                        return {...li, className: 'figure'}
+                    } else if (li.className === 'activityPlaceMove') {
+                        return {...li, className: 'inactive'}
+                    } else {
+                        return li
+                    }
+                }
+                return li
+            }
             return {
                 ...state,
                 activePiece: action.payload,
                 boardData: state.boardData.map(ul => {
                         return ul.map(li => {
-                            // console.log(li.className === 'attackFigure' ? li : null)
                             if (li.arrayPos === action.payload.arrayPos) {
                                 if (li.className === 'activeFigure') {//deactivate piece
                                     return {...li, className: 'figure'}
                                 }
                                 return {...li, className: 'activeFigure'}//activate piece
-                            } else if (li.className === 'activityPlaceMove') {//deactivate another cells for activity
-                                return {...li, className: 'inactive'}
-                            } else if (li.className === 'attackFigure') {//deactivate another cells for attack
-                                return {...li, className: 'figure'}
-                            } else if (li.className === 'activeFigure') {//deactivate another pieces
-                                return {...li, className: 'figure'}
                             } else {//add cells for activity
-                                if (action.payload.className === 'activeFigure') {//if deactivating piece=>deactivate all attackFigure and cells for activity
-                                    if (li.className === 'attackFigure') {
-                                        return {...li, className: 'figure'}
-                                    } else if (li.className === 'activityPlaceMove') {
-                                        return {...li, className: 'inactive'}
-                                    } else {
-                                        return li
-                                    }
-                                }
-                                switch (action.payload.img) {
-                                    case 'white_pawn.png':
-                                        // console.log(li)
-                                        let tmp = li.arrayPos ? li.arrayPos : 0
-                                        if (action.payload.arrayPos[0] === tmp[0]) {//
-                                            if ((Number(tmp[1]) === Number(action.payload.arrayPos[1]) - 1)//simple move for white pawn
-                                                && (Number(tmp[1]) - 1) > 0
-                                                && state.boardData[action.payload.arrayPos[0]][action.payload.arrayPos[1] - 1].className !== 'figure') {
-                                                if (li.className === 'attackFigure') {
-                                                    return li
-                                                }
-                                                return {...li, className: 'activityPlaceMove'}
-                                            } else if (Number(action.payload.arrayPos[1]) === 7) {//if it is first move for white pawn
-                                                if ((Number(tmp[1]) === Number(action.payload.arrayPos[1]) - 2)
-                                                    && (Number(tmp[1]) - 2) > 0
-                                                    && state.boardData[action.payload.arrayPos[0]][action.payload.arrayPos[1] - 2].className !== 'figure'
+                                if (action.payload.className === 'figure') {//if activated piece=>add cells for activity
+                                    let tmp = li.arrayPos ? li.arrayPos : 0
+                                    switch (action.payload.img) {
+                                        case 'white_pawn.png':
+                                            if (action.payload.arrayPos[0] === tmp[0]) {//
+                                                // console.log(state.boardData[action.payload.arrayPos[0]][action.payload.arrayPos[1] + 1])
+                                                if ((Number(tmp[1]) === Number(action.payload.arrayPos[1]) - 1)//simple move for white pawn
+                                                    && (Number(action.payload.arrayPos[1]) - 1) > 0
                                                     && state.boardData[action.payload.arrayPos[0]][action.payload.arrayPos[1] - 1].className !== 'figure') {
+                                                    if (li.className === 'attackFigure') {
+                                                        return deleteAnotherElements(li)
+                                                    }
                                                     return {...li, className: 'activityPlaceMove'}
+                                                } else if (Number(action.payload.arrayPos[1]) === 7) {//if it is first move for white pawn
+                                                    if ((Number(tmp[1]) === Number(action.payload.arrayPos[1]) - 2)
+                                                        && (Number(action.payload.arrayPos[1]) - 2) > 0
+                                                        && state.boardData[action.payload.arrayPos[0]][action.payload.arrayPos[1] - 2].className !== 'figure'
+                                                        && state.boardData[action.payload.arrayPos[0]][action.payload.arrayPos[1] - 1].className !== 'figure') {
+                                                        return {...li, className: 'activityPlaceMove'}
+                                                    } else {
+                                                        return deleteAnotherElements(li)
+                                                    }
                                                 } else {
-                                                    return li
+                                                    return deleteAnotherElements(li)
                                                 }
-                                            } else {
-                                                return li
+                                            } else {//for attack by white pawn
+                                                if ((Number(tmp[1]) === Number(action.payload.arrayPos[1]) - 1 && li.piece === 'black')
+                                                    && ((Number(tmp[0]) === Number(action.payload.arrayPos[0]) - 1 && Number(action.payload.arrayPos[0]) - 1 > 0) || (Number(tmp[0]) === Number(action.payload.arrayPos[0]) + 1 && Number(action.payload.arrayPos[0]) + 1 < 9))) {
+                                                    return {...li, className: 'attackFigure'}
+                                                } else {
+                                                    return deleteAnotherElements(li)
+                                                }
                                             }
-                                        } else {//for attack by white pawn
-                                            if ((Number(tmp[1]) === Number(action.payload.arrayPos[1]) - 1 && li.piece === 'black') && ((Number(tmp[0]) === Number(action.payload.arrayPos[0]) - 1 && Number(action.payload.arrayPos[0]) - 1 > 0) || (Number(tmp[0]) === Number(action.payload.arrayPos[0]) + 1 && Number(action.payload.arrayPos[0]) + 1 < 9))) {
-                                                return {...li, className: 'attackFigure'}
-                                            } else {
-                                                return li
+                                        case 'white_rook.png':
+                                            console.log('white_rook.png')
+                                            return li
+                                        case 'white_knight.png' :
+                                            console.log('white_knight.png')
+                                            return li
+                                        case 'white_bishop.png':
+                                            console.log('white_bishop.png')
+                                            return li
+                                        case 'white_queen.png':
+                                            console.log('white_queen.png')
+                                            return li
+                                        case 'white_king.png':
+                                            console.log('white_king.png')
+                                            return li
+                                        case 'black_pawn.png':
+                                            if (action.payload.arrayPos[0] === tmp[0]) {//
+                                                if ((Number(tmp[1]) === Number(action.payload.arrayPos[1]) + 1)//simple move for white pawn
+                                                    && (Number(action.payload.arrayPos[1]) + 1) < 9
+                                                    && state.boardData[action.payload.arrayPos[0]][Number(action.payload.arrayPos[1]) + 1].className !== 'figure') {
+                                                    if (li.className === 'attackFigure') {
+                                                        return deleteAnotherElements(li)
+                                                    }
+                                                    return {...li, className: 'activityPlaceMove'}
+                                                } else if (Number(action.payload.arrayPos[1]) === 2) {//if it is first move for white pawn
+                                                    console.log(state.boardData[action.payload.arrayPos[0]][Number(action.payload.arrayPos[1]) + 1].className !== 'figure')
+                                                    if ((Number(tmp[1]) === Number(action.payload.arrayPos[1]) + 2)
+                                                        && (Number(action.payload.arrayPos[1]) + 2) > 0
+                                                        && state.boardData[action.payload.arrayPos[0]][Number(action.payload.arrayPos[1]) + 2].className !== 'figure'
+                                                        && state.boardData[action.payload.arrayPos[0]][Number(action.payload.arrayPos[1]) + 1].className !== 'figure') {
+                                                        return {...li, className: 'activityPlaceMove'}
+                                                    } else {
+                                                        console.log('i cant')
+                                                        return deleteAnotherElements(li)
+                                                    }
+                                                } else {
+                                                    return deleteAnotherElements(li)
+                                                }
+                                            } else {//for attack by white pawn
+                                                if ((Number(tmp[1]) === Number(action.payload.arrayPos[1]) + 1 && li.piece === 'white')
+                                                    && ((Number(tmp[0]) === Number(action.payload.arrayPos[0]) - 1 && Number(action.payload.arrayPos[0]) - 1 > 0) || (Number(tmp[0]) === Number(action.payload.arrayPos[0]) + 1 && Number(action.payload.arrayPos[0]) + 1 < 9))) {
+                                                    return {...li, className: 'attackFigure'}
+                                                } else {
+                                                    return deleteAnotherElements(li)
+                                                }
                                             }
-                                        }
-                                    // return li
-                                    case 'white_rook.png':
-                                        console.log('white_rook.png')
-                                        return li
-                                    case 'white_knight.png' :
-                                        console.log('white_knight.png')
-                                        return li
-                                    case 'white_bishop.png':
-                                        console.log('white_bishop.png')
-                                        return li
-                                    case 'white_queen.png':
-                                        console.log('white_queen.png')
-                                        return li
-                                    case 'white_king.png':
-                                        console.log('white_king.png')
-                                        return li
-                                    case 'black_pawn.png':
-                                        console.log('black_pawn.png')
-                                        return li
-                                    case 'black_rook.png':
-                                        console.log('black_rook.png')
-                                        return li
-                                    case 'black_bishop.png':
-                                        console.log('black_bishop.png')
-                                        return li
-                                    case 'black_knight.png':
-                                        console.log('black_knight.png')
-                                        return li
-                                    case'black_queen.png':
-                                        console.log('black_queen.png')
-                                        return li
-                                    case'black_king.png':
-                                        console.log('black_king.png')
-                                        return li
+                                            return li
+                                        case 'black_rook.png':
+                                            console.log('black_rook.png')
+                                            return li
+                                        case 'black_bishop.png':
+                                            console.log('black_bishop.png')
+                                            return li
+                                        case 'black_knight.png':
+                                            console.log('black_knight.png')
+                                            return li
+                                        case'black_queen.png':
+                                            console.log('black_queen.png')
+                                            return li
+                                        case'black_king.png':
+                                            console.log('black_king.png')
+                                            return li
 
+                                    }
+                                } else {//if deactivated piece=> delete all cells for activity
+                                    return deleteAnotherElements(li)
                                 }
-
                             }
                         })
                     }
                 )
             }
         case MOVE_WHITE_PAWN:
-            console.log(state.activePiece)
             return {
                 ...state,
                 boardData: state.boardData.map(ul => {
                     return ul.map(li => {
                         if (li.className === 'attackFigure' && action.payload.arrayPos === li.arrayPos) {
-                            console.log({...state.activePiece, arrayPos: li.arrayPos, pos: li.pos})
                             return {...state.activePiece, arrayPos: li.arrayPos, pos: li.pos}
                         } else if (li.className === 'activityPlaceMove' && action.payload.arrayPos === li.arrayPos) {
-                            console.log({...state.activePiece, arrayPos: li.arrayPos, pos: li.pos})
                             return {...state.activePiece, arrayPos: li.arrayPos, pos: li.pos}
                         } else if (li.className === 'activityPlaceMove') {
                             return {...li, className: 'inactive'}
                         } else if (li.className === 'attackFigure') {
                             return {...li, className: 'figure'}
                         } else if (li.arrayPos === state.activePiece.arrayPos) {
-                            console.log({arrayPos: li.arrayPos, pos: li.pos, className: 'inactive'})
                             return {arrayPos: li.arrayPos, pos: li.pos, className: 'inactive'}
                         }
                         return li

@@ -63,6 +63,7 @@ const ChessBoard = () => {
         array[3][3] = {...array[3][3], img: 'white_pawn.png', piece: 'white', className: 'figure'}
         array[1][3] = {...array[1][3], img: 'white_pawn.png', piece: 'white', className: 'figure'}
         array[2][3] = {...array[2][3], img: 'white_pawn.png', piece: 'white', className: 'figure'}
+        array[4][3] = {...array[4][3], img: 'white_pawn.png', piece: 'white', className: 'figure'}
 
         array[1][1] = {...array[1][1], img: 'black_rook.png', piece: 'black', className: 'figure'}
         array[2][1] = {...array[2][1], img: 'black_knight.png', piece: 'black', className: 'figure'}
@@ -81,6 +82,7 @@ const ChessBoard = () => {
         array[6][2] = {...array[6][2], img: 'black_pawn.png', piece: 'black', className: 'figure'}
         array[7][2] = {...array[7][2], img: 'black_pawn.png', piece: 'black', className: 'figure'}
         array[8][2] = {...array[8][2], img: 'black_pawn.png', piece: 'black', className: 'figure'}
+        array[8][5] = {...array[8][5], img: 'black_pawn.png', piece: 'black', className: 'figure'}
         console.log(array)
         setBoardData(array)
         dispatch(setInitialBoard(array))

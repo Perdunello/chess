@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {moveWhitePawn, setActivePiece, setActivitySpaces, toggleActivePiece} from "../../redux/ChessBoardReducer";
 
 const Simple = ({pos}) => {
-    console.log('render')
+    // console.log('render')
     const data = useSelector(state => state.board.boardData[pos[0]][pos[1]])
     const turn = useSelector(state => state.board.turn)
     const dispatch = useDispatch()
